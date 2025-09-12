@@ -7,7 +7,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import fansirsqi.xposed.sesame.data.General;
-import fansirsqi.xposed.sesame.data.RuntimeInfo;
 import fansirsqi.xposed.sesame.entity.RpcEntity;
 import fansirsqi.xposed.sesame.hook.ApplicationHook;
 import fansirsqi.xposed.sesame.hook.rpc.intervallimit.RpcIntervalLimit;
@@ -203,22 +202,13 @@ public class OldRpcBridge implements RpcBridge {
         if (!ApplicationHook.isOffline()) {
             ApplicationHook.setOffline(true);
             Notify.updateStatusText("登录超时");
-            if (BaseModel.getTimeoutRestart().getValue()) {
-                Log.record(TAG,"尝试重新登录");
-                ApplicationHook.reLoginByBroadcast();
-            }
+
         }
     }
     /**
      * 处理能量收集异常的情况。
      */
     private void handleEnergyCollectException() {
-        if (BaseModel.getWaitWhenException().getValue() > 0) {
-            long waitTime = System.currentTimeMillis() + BaseModel.getWaitWhenException().getValue();
-            RuntimeInfo.getInstance().put(RuntimeInfo.RuntimeInfoKey.ForestPauseTime, waitTime);
-            Notify.updateStatusText("异常");
-            Log.record(TAG,"触发异常, 等待至" + TimeUtil.getCommonDate(waitTime));
-        }
     }
     /**
      * 处理 MMTP 异常的情况。

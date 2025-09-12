@@ -26,7 +26,7 @@ public class Toast {
             Log.runtime(TAG, "Context is null, cannot show toast");
             return;
         }
-        boolean shouldShow = force || (BaseModel.getShowToast() != null && BaseModel.getShowToast().getValue());
+        boolean shouldShow = force || BaseModel.getShowToast().getValue();
         if (shouldShow) {
             displayToast(context.getApplicationContext(), message);
         }

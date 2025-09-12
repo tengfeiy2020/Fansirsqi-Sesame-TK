@@ -9,11 +9,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import fansirsqi.xposed.sesame.entity.UserEntity;
+import fansirsqi.xposed.sesame.model.Model;
 import fansirsqi.xposed.sesame.model.ModelConfig;
 import fansirsqi.xposed.sesame.model.ModelField;
 import fansirsqi.xposed.sesame.model.ModelFields;
-import fansirsqi.xposed.sesame.task.ModelTask;
-import fansirsqi.xposed.sesame.task.TaskCommon;
 import fansirsqi.xposed.sesame.util.Files;
 import fansirsqi.xposed.sesame.util.JsonUtil;
 import fansirsqi.xposed.sesame.util.Log;
@@ -42,7 +41,7 @@ public class Config {
      */
     public void setModelFieldsMap(Map<String, ModelFields> newModels) {
         modelFieldsMap.clear();
-        Map<String, ModelConfig> modelConfigMap = ModelTask.getModelConfigMap();
+        Map<String, ModelConfig> modelConfigMap = Model.getModelConfigMap();
         // 如果传入的 newModels 为 null，初始化为空
         if (newModels == null) {
             newModels = new HashMap<>();
@@ -243,7 +242,6 @@ public class Config {
             }
         }
         INSTANCE.setInit(true);
-        TaskCommon.update();
         return INSTANCE;
     }
 

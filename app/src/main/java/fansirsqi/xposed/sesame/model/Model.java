@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import fansirsqi.xposed.sesame.model.modelFieldExt.BooleanModelField;
-import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.util.Log;
 import lombok.Getter;
 
@@ -126,14 +125,7 @@ public abstract class Model {
         for (int i = 0, len = modelArray.length; i < len; i++) {
             Model model = modelArray[i];
             if (model != null) {
-                try {
-                    if (ModelType.TASK == model.getType()) {
-                        ((ModelTask) model).stopTask();
-                    }
-                    model.destroy();
-                } catch (Exception e) {
-                    Log.printStackTrace(e);
-                }
+
                 modelArray[i] = null;
             }
         }

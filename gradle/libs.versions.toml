@@ -4,8 +4,8 @@ activity-compose = "1.10.1"
 android-plugin = "8.9.3"
 constraintlayout = "2.1.4"
 
-kotlin-plugin = "2.2.0-Beta2"
-kotlin-stdlib = "2.1.20"
+kotlin-plugin = "2.1.0"
+kotlin-stdlib = "2.1.0"
 shizukuVersion = "13.1.5"
 hiddenapi = "4.4.0"
 slf4j = "2.1.0-alpha1"
@@ -69,14 +69,12 @@ dexkit = { module = "org.luckypray:dexkit", version.ref = "dexkit" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "ui-tooling-preview-android" }
 
-libxposed-api = { group = "io.github.libxposed", name = "api", version.ref = "xposed-api" }
-libxposed-service = { group = "io.github.libxposed", name = "service", version.ref = "xposed-service" }
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-plugin" }
 android-library = { id = "com.android.library", version.ref = "android-plugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-plugin" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version = "2.0.0" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose",version = "2.2.20" }
 rikka-tools-refine = { id = "dev.rikka.tools.refine", version.ref = "hiddenapi" }
 

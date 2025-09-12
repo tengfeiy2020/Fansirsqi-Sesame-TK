@@ -16,7 +16,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import fansirsqi.xposed.sesame.data.RuntimeInfo
 import fansirsqi.xposed.sesame.hook.Toast
 import fansirsqi.xposed.sesame.model.BaseModel
 import kotlin.concurrent.Volatile
@@ -111,11 +110,7 @@ object Notify {
                 return
             }
             if (context is Service) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    (context as Service).stopForeground(Service.STOP_FOREGROUND_REMOVE)
-                } else {
-                    (context as Service).stopSelf()
-                }
+                (context as Service).stopForeground(Service.STOP_FOREGROUND_REMOVE)
             }
             NotificationManagerCompat.from(context!!).cancel(NOTIFICATION_ID)
             mNotifyManager = null
@@ -132,13 +127,8 @@ object Notify {
      */
     @JvmStatic
     fun updateStatusText(status: String?) {
-        var status = status
         if (!isNotificationStarted || context == null || builder == null || mNotifyManager == null) return
         try {
-            val forestPauseTime = RuntimeInfo.getInstance().getLong(RuntimeInfo.RuntimeInfoKey.ForestPauseTime)
-            if (forestPauseTime > System.currentTimeMillis()) {
-                status = "❌ 触发异常，等待至" + TimeUtil.getCommonDate(forestPauseTime) + "恢复运行"
-            }
             titleText = status
             sendText(true)
         } catch (e: Exception) {
@@ -165,22 +155,6 @@ object Notify {
         }
     }
 
-    /**
-     * 更新上一次执行的文本。
-     *
-     * @param content 上一次执行的内容。
-     */
-    @JvmStatic
-    fun updateLastExecText(content: String?) {
-        if (!isNotificationStarted || context == null || builder == null || mNotifyManager == null) return
-        try {
-            contentText = "📌 上次执行 " + TimeUtil.getTimeStr(System.currentTimeMillis()) + "\n🌾 " + content
-            sendText(false)
-        } catch (e: Exception) {
-            Log.printStackTrace(e)
-        }
-    }
-
 
     /**
      * 设置状态文本为执行中。
@@ -189,11 +163,6 @@ object Notify {
     fun setStatusTextExec() {
         if (!isNotificationStarted || context == null || builder == null || mNotifyManager == null) return
         try {
-            val forestPauseTime = RuntimeInfo.getInstance().getLong(RuntimeInfo.RuntimeInfoKey.ForestPauseTime)
-
-            if (forestPauseTime > System.currentTimeMillis()) {
-                titleText = "❌ 触发异常，等待至" + TimeUtil.getCommonDate(forestPauseTime) + "恢复运行"
-            }
             titleText = "⚙️ 芝麻粒正在施工中..."
             if (builder != null) {
                 builder!!.setContentTitle(titleText)
@@ -259,7 +228,7 @@ object Notify {
                 Log.error(TAG, "Context is null in sendErrorNotification, cannot proceed.")
                 return
             }
-            if (!Notify.checkPermission(context!!) || !isNotificationStarted) return
+            if (!checkPermission(context!!) || !isNotificationStarted) return
             mNotifyManager = context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val notificationChannel = NotificationChannel(CHANNEL_ID, "‼️ 芝麻粒异常通知", NotificationManager.IMPORTANCE_LOW)

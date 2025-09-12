@@ -40,7 +40,7 @@ android {
 
         if (!isCIBuild) {
             ndk {
-                abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+                abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
             }
         }
 
@@ -60,7 +60,7 @@ android {
         }
 
         versionCode = gitCommitCount
-        val buildTag = "beta"
+        val buildTag = "核心版"
         versionName = "v0.2.7.rc$gitCommitCount-$buildTag"
 
         buildConfigField("String", "BUILD_DATE", "\"$buildDate\"")
@@ -70,7 +70,7 @@ android {
         buildConfigField("String", "VERSION", "\"$versionName\"")
 
         ndk {
-            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
         }
 
         testOptions {

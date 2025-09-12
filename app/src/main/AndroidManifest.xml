@@ -53,7 +53,6 @@
 
 
         <activity android:name="fansirsqi.xposed.sesame.ui.ExtendActivity" />
-        <activity android:name="fansirsqi.xposed.sesame.ui.WebSettingsActivity" />
         <activity android:name="fansirsqi.xposed.sesame.ui.SettingActivity" />
         <activity android:name="fansirsqi.xposed.sesame.ui.HtmlViewerActivity" />
     </application>

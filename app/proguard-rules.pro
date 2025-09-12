@@ -1,4 +1,4 @@
-# ---------- 框架 ----------
+## ---------- 框架 ----------
 -keep class de.robv.android.xposed.** { *; }
 -keep class io.github.libxposed.service.** { *; }
 -dontwarn io.github.libxposed.service.**

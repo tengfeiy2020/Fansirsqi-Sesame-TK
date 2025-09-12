@@ -1,6 +1,5 @@
 package fansirsqi.xposed.sesame.ui;
 
-import static fansirsqi.xposed.sesame.data.UIConfig.UI_OPTION_WEB;
 
 import android.app.AlertDialog;
 import android.content.ClipData;
@@ -24,28 +23,18 @@ import java.util.Map;
 
 import fansirsqi.xposed.sesame.R;
 import fansirsqi.xposed.sesame.data.Config;
-import fansirsqi.xposed.sesame.data.UIConfig;
-import fansirsqi.xposed.sesame.data.ViewAppInfo;
 import fansirsqi.xposed.sesame.entity.AlipayUser;
 import fansirsqi.xposed.sesame.model.Model;
 import fansirsqi.xposed.sesame.model.ModelConfig;
 import fansirsqi.xposed.sesame.model.SelectModelFieldFunc;
 import fansirsqi.xposed.sesame.newui.WatermarkView;
-import fansirsqi.xposed.sesame.task.ModelTask;
 import fansirsqi.xposed.sesame.ui.widget.ContentPagerAdapter;
 import fansirsqi.xposed.sesame.ui.widget.ListDialog;
 import fansirsqi.xposed.sesame.ui.widget.TabAdapter;
 import fansirsqi.xposed.sesame.util.Files;
 import fansirsqi.xposed.sesame.util.LanguageUtil;
 import fansirsqi.xposed.sesame.util.Log;
-import fansirsqi.xposed.sesame.util.maps.BeachMap;
-import fansirsqi.xposed.sesame.util.maps.CooperateMap;
-import fansirsqi.xposed.sesame.util.maps.IdMapManager;
-import fansirsqi.xposed.sesame.util.maps.MemberBenefitsMap;
-import fansirsqi.xposed.sesame.util.maps.ParadiseCoinBenefitIdMap;
-import fansirsqi.xposed.sesame.util.maps.ReserveaMap;
 import fansirsqi.xposed.sesame.util.maps.UserMap;
-import fansirsqi.xposed.sesame.util.maps.VitalityRewardsMap;
 import fansirsqi.xposed.sesame.util.PortUtil;
 import fansirsqi.xposed.sesame.util.StringUtil;
 import fansirsqi.xposed.sesame.util.ToastUtil;
@@ -73,12 +62,6 @@ public class SettingActivity extends BaseActivity {
         Model.initAllModel();
         UserMap.setCurrentUserId(this.userId);
         UserMap.load(this.userId);
-        CooperateMap.getInstance(CooperateMap.class).load(this.userId);
-        IdMapManager.getInstance(VitalityRewardsMap.class).load(this.userId);
-        IdMapManager.getInstance(MemberBenefitsMap.class).load(this.userId);
-        IdMapManager.getInstance(ParadiseCoinBenefitIdMap.class).load(this.userId);
-        IdMapManager.getInstance(ReserveaMap.class).load();
-        IdMapManager.getInstance(BeachMap.class).load();
         Config.load(this.userId);
         // 设置语言和布局
         LanguageUtil.setLocale(this);
@@ -126,7 +109,7 @@ public class SettingActivity extends BaseActivity {
         try {
             RecyclerView recyclerTabList = findViewById(R.id.recycler_tab_list);
             recyclerTabList.setLayoutManager(new LinearLayoutManager(this));
-            Map<String, ModelConfig> modelConfigMap = ModelTask.getModelConfigMap();
+            Map<String, ModelConfig> modelConfigMap = Model.getModelConfigMap();
             List<String> tabTitles = new ArrayList<>();
             for (ModelConfig config : modelConfigMap.values()) {
                 tabTitles.add(config.getName());
@@ -160,9 +143,8 @@ public class SettingActivity extends BaseActivity {
         menu.add(0, 2, 2, "导入配置");
         menu.add(0, 3, 3, "删除配置");
         menu.add(0, 4, 4, "单向好友");
-        menu.add(0, 5, 5, "切换WEBUI");
-        menu.add(0, 6, 6, "保存");
-        menu.add(0, 7, 7, "复制ID");
+        menu.add(0, 5, 5, "保存");
+        menu.add(0, 6, 6, "复制ID");
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -209,22 +191,10 @@ public class SettingActivity extends BaseActivity {
             case 4: // 查看单向好友列表
                 ListDialog.show(this, "单向好友列表", AlipayUser.getList(user -> user.getFriendStatus() != 1), SelectModelFieldFunc.newMapInstance(), false, ListDialog.ListType.SHOW);
                 break;
-            case 5: // 切换到新 UI
-                UIConfig.INSTANCE.setUiOption(UI_OPTION_WEB);
-                if (UIConfig.save()) {
-                    Intent intent = new Intent(this, UIConfig.INSTANCE.getTargetActivityClass());
-                    intent.putExtra("userId", this.userId);
-                    intent.putExtra("userName", this.userName);
-                    finish();
-                    startActivity(intent);
-                } else {
-                    ToastUtil.makeText(this, "切换失败", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case 6:
+            case 5:
                 save();
                 break;
-            case 7:
+            case 6:
                 //复制userId到剪切板
                 android.content.ClipboardManager cm = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 ClipData clipData = ClipData.newPlainText("userId", this.userId);
@@ -237,20 +207,11 @@ public class SettingActivity extends BaseActivity {
 
     private void save() {
         try {
-            if (!ViewAppInfo.INSTANCE.getVeriftag()) {
-                ToastUtil.showToastWithDelay(this, "非内测用户！", 100);
-            }
-            if (Config.isModify(this.userId) && Config.save(this.userId, false)) {
+            if (Config.isModify(this.userId) && Config.save(this.userId, true)) {
                 ToastUtil.showToastWithDelay(this, "保存成功！", 100);
-                if (!StringUtil.isEmpty(this.userId)) {
-                    Intent intent = new Intent("com.eg.android.AlipayGphone.sesame.restart");
-                    intent.putExtra("userId", this.userId);
-                    sendBroadcast(intent);
-                }
             }
             if (!StringUtil.isEmpty(this.userId)) {
                 UserMap.save(this.userId);
-                CooperateMap.getInstance(CooperateMap.class).save(this.userId);
             }
         } catch (Throwable th) {
             Log.printStackTrace(th);

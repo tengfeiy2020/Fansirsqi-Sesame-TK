@@ -15,11 +15,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import fansirsqi.xposed.sesame.data.General
 import fansirsqi.xposed.sesame.hook.ApplicationHook
-import fansirsqi.xposed.sesame.task.antForest.AntForestRpcCall
 
 /** 权限工具类，用于检查和请求所需权限。  */
 object PermissionUtil {
-    private val TAG: String = AntForestRpcCall::class.java.getSimpleName()
+    private val TAG: String = "PermissionUtil"
     private const val REQUEST_EXTERNAL_STORAGE = 1
     private val PERMISSIONS_STORAGE = arrayOf("android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE")
 

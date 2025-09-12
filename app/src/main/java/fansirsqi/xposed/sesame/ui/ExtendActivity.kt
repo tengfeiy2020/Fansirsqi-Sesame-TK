@@ -1,10 +1,8 @@
 package fansirsqi.xposed.sesame.ui
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,7 +22,7 @@ import fansirsqi.xposed.sesame.util.ToastUtil
  * 扩展功能页面
  */
 class ExtendActivity : BaseActivity() {
-    private val TAG = ExtendActivity::class.java.simpleName
+    private val tag = ExtendActivity::class.java.simpleName
     private var debugTips: String? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var extendFunctionAdapter: ExtendFunctionAdapter
@@ -54,30 +52,7 @@ class ExtendActivity : BaseActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun populateExtendFunctions() {
-        extendFunctions.add(
-            ExtendFunctionItem(getString(R.string.query_the_remaining_amount_of_saplings)) {
-                sendItemsBroadcast("getTreeItems")
-                ToastUtil.makeText(this@ExtendActivity, debugTips, Toast.LENGTH_SHORT).show()
-            }
-        )
-        extendFunctions.add(
-            ExtendFunctionItem(getString(R.string.search_for_new_items_on_saplings)) {
-                sendItemsBroadcast("getNewTreeItems")
-                ToastUtil.makeText(this@ExtendActivity, debugTips, Toast.LENGTH_SHORT).show()
-            }
-        )
-        extendFunctions.add(
-            ExtendFunctionItem(getString(R.string.search_for_unlocked_regions)) {
-                sendItemsBroadcast("queryAreaTrees")
-                ToastUtil.makeText(this@ExtendActivity, debugTips, Toast.LENGTH_SHORT).show()
-            }
-        )
-        extendFunctions.add(
-            ExtendFunctionItem(getString(R.string.search_for_unlocked_items)) {
-                sendItemsBroadcast("getUnlockTreeItems")
-                ToastUtil.makeText(this@ExtendActivity, debugTips, Toast.LENGTH_SHORT).show()
-            }
-        )
+
         extendFunctions.add(
             ExtendFunctionItem(getString(R.string.clear_photo)) {
                 // 取出当前条数
@@ -138,7 +113,7 @@ class ExtendActivity : BaseActivity() {
                             val value: Any? = try {
                                 // 若不知道类型，可先按 Map 读；失败时再按 String 读
                                 DataStore.getOrCreate(key, object : TypeReference<Map<*, *>>() {})
-                            } catch (e: Exception) {
+                            } catch (_: Exception) {
                                 DataStore.getOrCreate(key, object : TypeReference<String>() {})
                             }
                             ToastUtil.showToast(this, "$value \n输入内容: $key")
@@ -157,9 +132,9 @@ class ExtendActivity : BaseActivity() {
                         .setView(inputEditText)
                         .setPositiveButton(R.string.ok) { _, _ ->
                             val inputText = inputEditText.text.toString()
-                            Log.debug(TAG, "获取BaseUrl：$inputText")
+                            Log.debug(tag, "获取BaseUrl：$inputText")
                             val key = inputText.toIntOrNull(16)  // 支持输入 0x11 这样的十六进制
-                            Log.debug(TAG, "获取BaseUrl key：$key")
+                            Log.debug(tag, "获取BaseUrl key：$key")
                             if (key != null) {
                                 val output = getApi(key)
                                 ToastUtil.showToast(this, "$output \n输入内容: $inputText")
@@ -176,17 +151,4 @@ class ExtendActivity : BaseActivity() {
         extendFunctionAdapter.notifyDataSetChanged()
     }
 
-    /**
-     * 发送广播事件
-     *
-     * @param type 广播类型
-     */
-    private fun sendItemsBroadcast(type: String) {
-        val intent = Intent("com.eg.android.AlipayGphone.sesame.rpctest")
-        intent.putExtra("method", "")
-        intent.putExtra("data", "")
-        intent.putExtra("type", type)
-        sendBroadcast(intent) // 发送广播
-        Log.debug(TAG, "扩展工具主动调用广播查询📢：$type")
-    }
 }

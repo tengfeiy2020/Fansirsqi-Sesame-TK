@@ -60,9 +60,7 @@ public class Log {
 
     public static void record(String msg) {
         runtime(msg);
-        if (BaseModel.getRecordLog().getValue()) {
             RECORD_LOGGER.info(TAG + "{}", msg);
-        }
     }
 
     public static void record(String TAG, String msg) {

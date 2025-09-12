@@ -28,7 +28,6 @@ import fansirsqi.xposed.sesame.data.UIConfig
 import fansirsqi.xposed.sesame.data.ViewAppInfo
 import fansirsqi.xposed.sesame.data.ViewAppInfo.verifyId
 import fansirsqi.xposed.sesame.entity.UserEntity
-import fansirsqi.xposed.sesame.net.SecureApiClient
 import fansirsqi.xposed.sesame.newui.DeviceInfoCard
 import fansirsqi.xposed.sesame.newui.DeviceInfoUtil
 import fansirsqi.xposed.sesame.newui.WatermarkView
@@ -57,7 +56,6 @@ class MainActivity : BaseActivity() {
     private var userEntityArray = arrayOf<UserEntity?>(null)
     private lateinit var oneWord: TextView
 
-    private lateinit var c: SecureApiClient
     private var userNickName: String = ""
 
     @SuppressLint("SetTextI18n", "UnsafeDynamicallyLoadedCode")
@@ -95,26 +93,6 @@ class MainActivity : BaseActivity() {
         lifecycleScope.launch {
             val result = FansirsqiUtil.getOneWord()
             oneWord.text = result
-        }
-        c = SecureApiClient(baseUrl = getRandomApi(0x22), signatureKey = getRandomEncryptData(0xCF))
-        lifecycleScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                c.secureVerify(deviceId = verifyId, path = getRandomEncryptData(0x9e))
-            }
-            Log.runtime("verify result = $result")
-            ToastUtil.makeText("${result?.optString("message")}", Toast.LENGTH_SHORT).show()
-            when (result?.optInt("status")) {
-                208, 400, 210, 209, 300, 200, 202, 203, 204, 205 -> {
-                    ViewAppInfo.veriftag = false
-                }
-
-                101, 100 -> {
-                    ViewAppInfo.veriftag = true
-                    userNickName = result.optJSONObject("data")?.optString("user").toString()
-                    updateSubTitle(RunType.LOADED.nickName)
-                }
-            }
-
         }
 
     }
@@ -159,37 +137,8 @@ class MainActivity : BaseActivity() {
     }
 
     fun onClick(v: View) {
-        var data = "file://"
         val id = v.id
         when (id) {
-            R.id.btn_forest_log -> {
-                data += Files.getForestLogFile().absolutePath
-            }
-
-            R.id.btn_farm_log -> {
-                data += Files.getFarmLogFile().absolutePath
-            }
-
-            R.id.btn_other_log -> {
-                data += Files.getOtherLogFile().absolutePath
-            }
-
-            R.id.btn_github -> {
-                data = "https://github.com/Fansirsqi/Sesame-TK"
-            }
-
-            R.id.btn_settings -> {
-                showSelectionDialog(
-                    "📌 请选择配置", userNameArray, { index: Int -> this.goSettingActivity(index) }, "😡 老子就不选", {}, true
-                )
-                return
-            }
-
-            R.id.btn_friend_watch -> {
-                ToastUtil.makeText(this, "🏗 功能施工中...", Toast.LENGTH_SHORT).show()
-                return
-            }
-
             R.id.one_word -> {
                 oneWord.text = "正在获取句子，请稍后……"
                 updateSubTitle(RunType.LOADED.nickName)
@@ -201,9 +150,6 @@ class MainActivity : BaseActivity() {
                 return
             }
         }
-        val it = Intent(this, HtmlViewerActivity::class.java)
-        it.data = data.toUri()
-        startActivity(it)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
