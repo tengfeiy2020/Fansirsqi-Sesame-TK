@@ -3908,6 +3908,49 @@ class AntFarm : ModelTask() {
         }
     }
 
+    /**
+     * 处理黄金小鸡的加速任务
+     * 对应 RPC: com.alipay.antfarm.listFarmTask (taskSceneCode=ANTFARM_CAIFU_NPC_TASK)
+     */
+    private fun handleGoldChickenTasks() {
+        try {
+            // 注意：需确保 AntFarmRpcCall 中已添加 listGoldChickenFarmTask 方法，参数对应日志中的 requestData
+            val s = AntFarmRpcCall.listGoldChickenFarmTask()
+            val jo = JSONObject(s)
+            if (ResChecker.checkRes(TAG, jo)) {
+                val taskList = jo.optJSONArray("farmTaskList") ?: return
+                for (i in 0 until taskList.length()) {
+                    val task = taskList.getJSONObject(i)
+                    val taskId = task.optString("taskId")
+                    val title = task.optString("title")
+                    val taskStatus = task.optString("taskStatus")
+                    val bizKey = task.optString("bizKey")
+                    val taskMode = task.optString("taskMode")
+
+                    // 1. 领取奖励
+                    if (TaskStatus.FINISHED.name == taskStatus) {
+                        val awardRes = AntFarmRpcCall.receiveFarmTaskAward(taskId)
+                        val awardJo = JSONObject(awardRes)
+                        if (ResChecker.checkRes(TAG, awardJo)) {
+                            val awardCount = task.optInt("awardCount", 0)
+                            Log.farm("NPC任务🤖[完成: $title, 奖励: $awardCount 黄金票]")
+                        }
+                    }
+                    // 2. 做任务 (仅处理 TRIGGER 类型，如"开始攒黄金"、"领体验金")
+                    else if (TaskStatus.TODO.name == taskStatus && taskMode == "TRIGGER") {
+                        val doRes = AntFarmRpcCall.doFarmTask(bizKey)
+                        val doJo = JSONObject(doRes)
+                        if (ResChecker.checkRes(TAG, doJo)) {
+                            Log.farm("NPC任务🤖[触发: $title]")
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.printStackTrace(TAG, "handleGoldChickenTasks err", e)
+        }
+    }
+
     private suspend fun drawGameCenterAward() {
         try {
             val response = AntFarmRpcCall.queryGameList()
