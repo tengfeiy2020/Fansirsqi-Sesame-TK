@@ -602,6 +602,25 @@ public class AntFarmRpcCall {
     }
 
     /**
+     * 获取农场小鸡(肥料鸡)任务列表
+     * source: feiliaoji_202507
+     * taskSceneCode: ANTFARM_ORCHARD_NPC_TASK
+     */
+    public static String listFarmChickenFarmTask() {
+        String args = "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"feiliaoji_202507\",\"taskSceneCode\":\"ANTFARM_ORCHARD_NPC_TASK\",\"version\":\"" + VERSION + "\"}]";
+        return RequestManager.requestString("com.alipay.antfarm.listFarmTask", args);
+    }
+
+    /**
+     * 领取农场小鸡任务奖励
+     * awardType: NPC_ANIMAL_FOOD
+     */
+    public static String receiveFarmChickenTaskAward(String taskId) {
+        String args = "[{\"awardType\":\"NPC_ANIMAL_FOOD\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"feiliaoji_202507\",\"taskId\":\"" + taskId + "\",\"taskSceneCode\":\"ANTFARM_ORCHARD_NPC_TASK\",\"version\":\"" + VERSION + "\"}]";
+        return RequestManager.requestString("com.alipay.antfarm.receiveFarmTaskAward", args);
+    }
+
+    /**
      * 领取蚂蚁庄园游戏中心奖励 (开宝箱)
      * @param drawTimes 开启次数
      */
