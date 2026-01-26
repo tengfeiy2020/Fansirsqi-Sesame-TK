@@ -572,7 +572,7 @@ public class AntFarmRpcCall {
     }
 
     /**
-     * 获取芝麻NPC任务列表
+     * 获取芝麻NPC任务列表  大表哥
      */
     public static String listZhimaNpcFarmTask() {
         String args = "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"zhimaxiaoji_lianjin\",\"taskSceneCode\":\"ANTFARM_ZHIMA_NPC_TASK\",\"version\":\"" + VERSION + "\"}]";
@@ -580,11 +580,16 @@ public class AntFarmRpcCall {
     }
 
     /**
-     * 领取芝麻NPC任务奖励  芝麻大表鸽
+     * 领取芝麻NPC任务奖励
      */
     public static String receiveZhimaNpcFarmTaskAward(String taskId) {
         String args = "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"zhimaxiaoji_lianjin\",\"taskId\":\"" + taskId + "\",\"taskSceneCode\":\"ANTFARM_ZHIMA_NPC_TASK\",\"version\":\"" + VERSION + "\"}]";
         return RequestManager.requestString("com.alipay.antfarm.receiveFarmTaskAward", args);
+    }
+
+    public static String DrawPrize() {
+        return RequestManager.requestString("com.alipay.antfarm.DrawPrize",
+                "[{\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"chouchoule\"}]");
     }
 
     /**
@@ -592,22 +597,8 @@ public class AntFarmRpcCall {
      * 对应日志中的 taskSceneCode: "ANTFARM_CAIFU_NPC_TASK"
      */
     public static String listGoldChickenFarmTask() {
-        try {
-            JSONObject jo = new JSONObject();
-            jo.put("requestType", "NORMAL");
-            jo.put("sceneCode", "ANTFARM");
-            jo.put("source", "H5");
-            jo.put("taskSceneCode", "ANTFARM_CAIFU_NPC_TASK");
-            return RequestManager.requestString("com.alipay.antfarm.listFarmTask", "[" + jo.toString() + "]");
-        } catch (JSONException e) {
-            Log.printStackTrace(e);
-            return "";
-        }
-    }
-
-    public static String DrawPrize() {
-        return RequestManager.requestString("com.alipay.antfarm.DrawPrize",
-                "[{\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"chouchoule\"}]");
+        String args = "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"taskSceneCode\":\"ANTFARM_CAIFU_NPC_TASK\",\"version\":\"" + VERSION + "\"}]";
+        return RequestManager.requestString("com.alipay.antfarm.listFarmTask", args);
     }
 
     /**
