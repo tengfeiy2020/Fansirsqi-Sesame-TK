@@ -84,11 +84,12 @@ fun MainScreen(
                             BottomNavItem.Settings -> "模块设置"
                         },
                         style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 22.sp,
+                        fontSize = 24.sp,
+                        fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
                         color = when (currentScreen) {
                             BottomNavItem.Home -> when (activeUserName) {
                                 "未载入" -> MaterialTheme.colorScheme.error
-                                else -> MaterialTheme.colorScheme.secondary
+                                else -> MaterialTheme.colorScheme.primary
                             }
                             else -> MaterialTheme.colorScheme.secondary
 
